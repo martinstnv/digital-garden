@@ -10,9 +10,31 @@ tags:
 
 > How a CPU’s architecture determines the size of its memory space, how memory addresses work at the byte level, and how these addresses are represented in binary and hexadecimal formats, showing the maximum memory each architecture can handle.
 
-## Memory Addressing
+# Types of CPU Architecture
+
+CPU architectures differ in how they organize memory, execute instructions, and process data. These differences influence performance, efficiency, and how software interacts with hardware.
+
+### Von Neumann Architecture
+
+The Von Neumann architecture uses a single shared memory for both instructions and data. Because everything travels over the same bus, the CPU can handle only one operation at a time, creating what’s known as the Von Neumann bottleneck. Most general-purpose computers historically use this model due to its simplicity.
+
+### Harvard Architecture
+
+The Harvard architecture separates instruction memory from data memory, allowing the CPU to fetch an instruction and access data simultaneously. This parallelism improves performance and is commonly used in microcontrollers and embedded systems where speed and predictability are important.
+
+### CISC (Complex Instruction Set Computer)
+
+CISC processors use a large set of complex instructions, each capable of performing multiple operations. This reduces the number of instructions a program needs but makes the CPU design more complex. The x86 family (Intel/AMD) is the most prominent example.
+
+### RISC (Reduced Instruction Set Computer)
+
+RISC processors use a smaller set of simple, fast instructions, usually executing one instruction per cycle. This leads to greater efficiency and lower power usage. ARM, MIPS, and RISC-V are common RISC architectures, widely used in mobile and embedded devices.
+
+# Memory Addressing
 
 A 32-bit CPU architecture means that the process memory space is represented using 32 bits. The lowest memory address in this space can be visualized in binary as `0000 0000 0000 0000 0000 0000 0000 0000`. Following the same logic, the highest memory address in binary is `1111 1111 1111 1111 1111 1111 1111 1111`.
+
+### Memory Space
 
 By convention, memory addresses are often written in hexadecimal format. In this notation, the lowest address is `0x00000000` and the highest address is `0xFFFFFFFF`, since each group of four binary digits corresponds to a single hexadecimal digit, with `0000` equaling 0x0 and `1111` equaling 0xF.
 
@@ -77,7 +99,7 @@ Physical memory is the actual RAM installed in the system and it is often less t
 In comparison, a 16-bit CPU can address up to 65,536 bytes, which equals 64 KB of addressable memory, while a 64-bit CPU can theoretically address up to 18,446,744,065,119,617,025 KB, or 16,384 PB of memory.
 
 
-## Endianess
+### Endianess
 
 When a CPU stores values larger than one byte—such as 2-byte, 4-byte, or 8-byte numbers—it must decide the order in which the bytes are stored in memory. This ordering is called endianness:
 
@@ -106,3 +128,7 @@ While in litte endian, it would be:
 |  0x00000010  |  0xDDEE9955  |
 
 As another example, the 16-bit value `0xCAFE` would be stored as `FECA0000` in little-endian format and as `0000CAFE` in big-endian format. Note that the leading zeros are typically displayed when showing memory contents in fixed-width formats.
+
+### Word Size
+
+The word size of a CPU refers to the number of bits it processes or moves at a time. Common word sizes include 8-bit, 16-bit, 32-bit, and 64-bit, and this fundamental characteristic affects how the CPU accesses memory, how much memory it can address, and overall performance.
