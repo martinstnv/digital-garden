@@ -1,6 +1,6 @@
 ---
 layout: single
-title: Understanding CPU Architecture and Memory Addressing
+title: CPU Architecture and Memory Addressing
 date: 2025-11-30
 classes: wide
 tags:
