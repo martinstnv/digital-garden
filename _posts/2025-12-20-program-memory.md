@@ -9,14 +9,14 @@ tags:
 ---
 
 > Operating systems use virtual memory to allow processes to work as if they have the full addressable space, even if physical RAM is smaller.
-- (Memory Addressing: Physical and Virtual Memory)[/memory-addressing/#physical-and-virtual-memory]
+- [Memory Addressing: Physical and Virtual Memory](/memory-addressing/#physical-and-virtual-memory)
 
 The following diagram illustrates a typical program memory layout on a 32-bit system, with virtual addresses spanning from `0x00000000` to `0xFFFFFFFF`.
 
 ```
 High Address (0xFFFFFFFF)  ->  |-----------------------------|
                                |                             |
-                               |   Command line arguments    |
+                               |   Command-line arguments    |
                                |  and environment variables  |
                                |                             |
                                |-----------------------------|
@@ -37,15 +37,18 @@ High Address (0xFFFFFFFF)  ->  |-----------------------------|
                                |                             |
                                |-----------------------------|
                                |                             |
-                               |      Data (Uninitialised)   | 
+                               |     Data Segment (BSS)      |
+                               |       (Uninitialised)       | 
                                |                             |
                                |-----------------------------|
                                |                             |
-                               |      Data (Initialised)     | 
+                               |         Data Segment        |
+                               |         (Initialised)       | 
                                |                             |
                                |-----------------------------|
                                |                             |
-                               |         Text Segment        | 
+                               |         Text Segment        |
+                               |        (Program Code)       |
                                |                             |
 Low Address  (0x00000000)  ->  |-----------------------------|
 ```
@@ -66,9 +69,79 @@ Between the Data segment and the Stack lies the Heap, the area managed by dynami
 
 Unlike the Text and Data segments, the contents of the Stack and Heap are determined at runtime, and their organization and growth depend on the program’s execution.
 
+As the program requires more memory for the Heap, it expands upward toward higher memory addresses, whereas the Stack grows downward toward lower addresses when more space is needed.
+
+During execution, the program keeps track of the Stack Pointer, which marks the current top of the Stack.
+
 ```
-0x00000000                                                       0xFFFFFFFF
----------------------------------------------------------------------------
-|      ...      |   HEAP   |  ->          <-  |   STACK   |      ...      |
----------------------------------------------------------------------------
+0xFFFFFFFF  |-----------------------------|
+            |                             |
+            |             ...             |
+            |                             |
+            |-----------------------------|
+            |                             |
+            |            Stack            | 
+            |                             |
+            |.............................| <- Stack Pointer
+            |                             |
+            |                             |
+            |                             |
+            |.............................|
+            |                             |
+            |            Heap             | 
+            |                             |
+            |-----------------------------|
+            |                             |
+            |             ...             |
+            |                             |
+            |-----------------------------|
+            |                             |
+            |        section .text        |
+            |        global _start        |
+            |                             |
+            |        _start:              |
+            |            push 0x539;      |
+            |                             |
+0x00000000  |-----------------------------|
 ```
+
+When a push instruction is executed, the value is placed onto the Stack, and the Stack Pointer is updated accordingly.
+
+```
+0xFFFFFFFF  |-----------------------------|                      0xFFFFFFFF  |-----------------------------|
+            |                             |                                  |                             |
+            |             ...             |                                  |             ...             |
+            |                             |                                  |                             |
+            |-----------------------------|                                  |-----------------------------|
+            |                             |                                  |                             |
+            |            Stack            |                                  |            Stack            |
+            |                             |                                  |                             |
+            |.............................|                                  |.............................|
+            |            1337             |                                  |            1337             |                    
+            |.............................| <- Stack Pointer                 |.............................|
+            |                             |                                  |            7331             | 
+            |                             |                                  |.............................| <- Stack Pointer
+            |                             |                                  |                             |
+            |                             |                                  |                             |
+            |                             |                                  |                             |
+            |.............................|                                  |.............................|
+            |                             |                                  |                             |
+            |            Heap             |                                  |            Heap             |
+            |                             |                                  |                             |
+            |-----------------------------|                                  |-----------------------------|
+            |                             |                                  |                             |
+            |             ...             |                                  |             ...             |
+            |                             |                                  |                             |
+            |-----------------------------|                                  |-----------------------------|
+            |                             |                                  |                             |
+            |        section .text        |                                  |        section .text        |
+            |        global _start        |                                  |        global _start        |
+            |                             |                                  |                             |
+            |        _start:              |                                  |        _start:              |
+            |            push 0x539;      |                                  |            push 0x539;      |
+            |                             |                                  |            push 0x1CB3;     |
+            |                             |                                  |                             |
+0x00000000  |-----------------------------|                                  |-----------------------------|
+```
+
+In addition to storing local variables, the Stack is used to manage function calls and returns, holding return addresses and other bookkeeping information.
