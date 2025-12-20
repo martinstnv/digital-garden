@@ -39,11 +39,11 @@ The following diagram illustrates a typical program memory layout on a 32-bit sy
 (Low Address)
 ```
 
-At the bottom of the address space lies the Text Segment, also called the Code Segment, which stores the program’s instructions.
+At the bottom of the address space lies the Text Segment, or the Program Code, which stores the program’s instructions.
 
 Directly above the Text segment is the Data segment, which is divided into two areas:
-	1.	Initialized data - where variables with predefined values are stored.
-	2.	Uninitialized data (BSS) - where variables without initial values reside.
+ 1.	Initialized data - where variables with predefined values are stored.
+ 2.	Uninitialized data (BSS) - where variables without initial values reside.
 
 > Note: Global variables that are not explicitly initialized by the program are automatically set to 0 by the process model. This behavior does not apply to local variables.
 
@@ -130,7 +130,7 @@ The function receives three arguments and contains two local variables. The diag
 0xFFFFFFFF  |-----------------------------|
             |             ...             |
             |-----------------------------|
-            |        Caller's locals      | 
+            |         Caller's data       | 
             |.............................| <- Stack Pointer
             |                             |
             |                             |
@@ -144,7 +144,7 @@ When a CALL instruction is executed, the function arguments are first pushed ont
 0xFFFFFFFF  |-----------------------------|
             |             ...             |
             |-----------------------------|
-            |        Caller's locals      | 
+            |         Caller's data       | 
             |.............................|
             |             arg3            |
             |.............................|
@@ -168,7 +168,7 @@ As a result, no matter when or from where the function is invoked, the compiler 
 0xFFFFFFFF  |-----------------------------|
             |             ...             |
             |-----------------------------|
-            |        Caller's locals      | 
+            |         Caller's data       | 
             |.............................| <- start of stack frame of the called function
             |             arg3            |
             |.............................|
@@ -190,4 +190,4 @@ As a result, no matter when or from where the function is invoked, the compiler 
 
 When a called function completes execution, it uses the stored return address to continue execution in the caller.
 
-> In summary, a function call works as follows: the caller first pushes the function arguments onto the stack in reverse order, after which the CALL instruction pushes the return address. Within the called function, the previous Frame Pointer is saved on the stack, a new Frame Pointer is established, and space is allocated for local variables. To return, the function restores the previous stack frame by resetting the Frame Pointer and then jumps back to the return address stored on the stack.
+In summary a function call works as follows: the caller first pushes the function arguments onto the stack in reverse order, after which the CALL instruction pushes the return address. Within the called function, the previous Frame Pointer is saved on the stack, a new Frame Pointer is established, and space is allocated for local variables. To return, the function restores the previous stack frame by resetting the Frame Pointer and then jumps back to the return address stored on the stack.
