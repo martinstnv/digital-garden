@@ -19,53 +19,6 @@ void fibonacci(int a, int b) {
 
 Because of the infinite recursion, each call consumes stack space until the program crashes with a stack overflow.
 
-```
-High Address
-              +-----------------------------+
-              |                             | 
-              |.............................|
-              |              a              |
-              |.............................|
-              |              b              |
-              |.............................|
-              |        Return Address       |
-              |.............................|
-              |   Previous Frame Pointer    |
-              |.............................| <- Current Frame Pointer
-              |              c              |
-              |.............................|
-Low Address
-```
-
-```
-High Address
-              +-----------------------------+
-              |                             | 
-              |.............................|
-              |              a              |  // 0
-              |.............................|
-              |              b              |  // 1
-              |.............................|
-              |        Return Address       |
-              |.............................|
-              |       Frame Pointer #1      |
-              |.............................|
-              |              c              |  // 1
-              |.............................|
-              |              a              |  // 1
-              |.............................|
-              |              b              |  // 2
-              |.............................|
-              |        Return Address       |
-              |.............................|
-              |      Frame Pointer (#3)     |
-              |.............................| <- Frame Pointer #3
-              |              c              |  // 3
-              |.............................|
-Low Address
-```
-
-The stack is limited by the operating system, not by C itself.
 
 ```
 High Address
@@ -98,6 +51,8 @@ High Address
               |.............................|
 Low Address
 ```
+
+The stack is limited by the operating system, not by C itself.
 
 Typical defaults:
  - Linux: ~8 MB (often configurable via ulimit -s)
