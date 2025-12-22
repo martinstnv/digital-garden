@@ -1,7 +1,7 @@
 ---
 layout: single
 title: Program Memory
-date: 2025-12-06
+date: 2025-12-20
 classes: wide
 tags:
   - Stack
@@ -15,10 +15,10 @@ The following diagram illustrates a typical program memory layout on a 32-bit sy
 
 ```
 (High Address)
-0xFFFFFFFF  ->  |-----------------------------|
+0xFFFFFFFF  ->  +-----------------------------+
                 |   Command-line arguments    |
                 |  and environment variables  |
-                |-----------------------------|
+                +-----------------------------+
                 |            Stack            | 
                 |.............................|
                 |                             |
@@ -26,16 +26,16 @@ The following diagram illustrates a typical program memory layout on a 32-bit sy
                 |                             |
                 |            Heap             | 
                 |                             |
-                |-----------------------------|
+                +-----------------------------+
                 |     Data Segment (BSS)      |
                 |       (Uninitialised)       | 
-                |-----------------------------|
+                +-----------------------------+
                 |         Data Segment        |
                 |         (Initialised)       | 
-                |-----------------------------|
+                +-----------------------------+
                 |         Text Segment        |
                 |        (Program Code)       |
-0x00000000  ->  |-----------------------------|
+0x00000000  ->  +-----------------------------+
 (Low Address)
 ```
 
@@ -57,14 +57,55 @@ Unlike the Text and Data segments, the contents of the Stack and Heap are determ
 
 As the program requires more memory for the Heap, it expands upward toward higher memory addresses, whereas the Stack grows downward toward lower addresses when more space is needed.
 
+In Windows things look different - the typical layout is:
+
+```
+0xFFFFFFFF  +-----------------------------------+
+            |           Kernel space            |
+            |          (system memory)          | 
+            |    (inaccessible to user mode)    |
+            +-----------------------------------+
+            |                                   |
+            +-----------------------------------+
+            |               DLLs                |
+            |       (mapped into memory)        |
+            +-----------------------------------+
+            |                                   |
+            |                                   |
+            +...................................+
+            |               Heap                |
+            |          (grows upward)           |
+            +-----------------------------------+
+            |               TEB                 |
+            |     Thread Environment Block      |
+            +-----------------------------------+
+            |               PEB                 |
+            |    Process Environment Block      |
+            +-----------------------------------+
+            |           Program Image           |
+            |       (code + data + .bss)        |
+            +-----------------------------------+
+            |               Stack               |
+            |  (Thread stacks, grows downward)  |
+            +...................................+
+            |                                   |
+            |                                   |
+            +-----------------------------------+
+            |             NULL page             |
+            |    (inaccessible, guard page)     |
+0x00000000  +-----------------------------------+
+```
+
+However, for this excersise we will be focusing on the memory layout that is typical for UNIX-like systems.
+
 ## The Stack
 
 During execution, the program keeps track of the Stack Pointer, which marks the current top of the Stack.
 
 ```
-0xFFFFFFFF  |-----------------------------|
+0xFFFFFFFF  +-----------------------------+
             |             ...             |
-            |-----------------------------|
+            +-----------------------------+
             |            Stack            |
             |.............................| <- Stack Pointer
             |                             |
@@ -72,23 +113,23 @@ During execution, the program keeps track of the Stack Pointer, which marks the 
             |                             |
             |.............................|
             |            Heap             |
-            |-----------------------------|
+            +-----------------------------+
             |             ...             |
-            |-----------------------------|
+            +-----------------------------+
             |        section .text        |
             |        global _start        |
             |                             |
             |        _start:              |
             |            ...              |
-0x00000000  |-----------------------------|
+0x00000000  +-----------------------------+
 ```
 
 When a push instruction is executed, the value is placed onto the Stack, and the Stack Pointer is updated accordingly.
 
 ```
-0xFFFFFFFF  |-----------------------------|
+0xFFFFFFFF  +-----------------------------+
             |             ...             |
-            |-----------------------------|
+            +-----------------------------+
             |            Stack            |
             |.............................|
             |            1337             |                    
@@ -100,9 +141,9 @@ When a push instruction is executed, the value is placed onto the Stack, and the
             |                             |
             |.............................|
             |            Heap             |
-            |-----------------------------|
+            +-----------------------------+
             |             ...             |
-            |-----------------------------|
+            +-----------------------------+
             |        section .text        |
             |        global _start        |
             |                             |
@@ -110,7 +151,7 @@ When a push instruction is executed, the value is placed onto the Stack, and the
             |            push 0x539;      |
             |            push 0x1CB3;     |
             |            ...              |
-            |-----------------------------|
+            +-----------------------------+
 ```
 
 In addition to storing local variables, the stack is used to manage function calls and returns, keeping track of return addresses and other bookkeeping information.
@@ -129,9 +170,9 @@ void func(char *arg1, int arg2, int arg3)
 The function receives three arguments and contains two local variables. The diagram below illustrates the process memory, beginning with the caller’s data, that is, the data belonging to the function that invoked this one.
 
 ```
-0xFFFFFFFF  |-----------------------------|
+0xFFFFFFFF  +-----------------------------+
             |             ...             |
-            |-----------------------------|
+            +-----------------------------+
             |         Caller's data       |
             |.............................| <- Stack Pointer
             |                             |
@@ -142,9 +183,9 @@ When a CALL instruction is executed, the function arguments are first pushed ont
 
 
 ```
-0xFFFFFFFF  |-----------------------------|
+0xFFFFFFFF  +-----------------------------+
             |             ...             |
-            |-----------------------------|
+            +-----------------------------+
             |         Caller's data       |
             |.............................|
             |             arg3            |
@@ -166,9 +207,9 @@ For the compiler to accurately access a variable within a function, it needs to 
 As a result, no matter when or from where the function is invoked, the compiler can reliably determine that a local variable, such as loc2, will always be located at a fixed offset (e.g., 8 bytes) from the Frame Pointer.
 
 ```
-0xFFFFFFFF  |-----------------------------|
+0xFFFFFFFF  +-----------------------------+
             |             ...             |
-            |-----------------------------|
+            +-----------------------------+
             |         Caller's data       |
             |.............................| <- start of stack frame
             |             arg3            |
@@ -192,11 +233,11 @@ As a result, no matter when or from where the function is invoked, the compiler 
 Everything from the first argument till the stack pointer is considered as the Stack Frame.
 
 ```
-0xFFFFFFFF  |-----------------------------|
+0xFFFFFFFF  +-----------------------------+
             |             ...             |
-            |-----------------------------|
+            +-----------------------------+
             |         Caller's data       |
-            |.............................| <--
+            |.............................| <--+
             |             arg3            |    |
             |.............................|    |
             |                             |    |
@@ -204,7 +245,7 @@ Everything from the first argument till the stack pointer is considered as the S
             |                             |    |
             |.............................|    |
             |             loc2            |    |
-            |.............................| <--
+            |.............................| <--+
             |                             |
             |                             |
 ```
