@@ -37,7 +37,7 @@ copyright = "Martin Stoynov"
   url = "https://linkedin.com/in/martinstnv"
 
 [[params.social]]
-  icon = "mastodon"
+  icon = "brand-mastodon"
   name = "Infosec Exchanges"
   url = "https://infosec.exchange/@martinstnv"
 
