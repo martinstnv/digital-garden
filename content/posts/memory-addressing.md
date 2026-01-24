@@ -18,9 +18,9 @@ A 32-bit CPU architecture means that the process memory space is represented usi
 
 ## Memory Space
 
-By convention, memory addresses are often written in hexadecimal format. In this notation, the lowest address is `0x00000000` and the highest address is `0xFFFFFFFF`, since each group of four binary digits corresponds to a single hexadecimal digit, with `0000` equaling 0x0 and `1111` equaling 0xF.
+By convention, memory addresses are often written in hexadecimal format. In this notation, the lowest address is `0x00000000` and the highest address is `0xFFFFFFFF`, since each group of four binary digits corresponds to a single hexadecimal digit, with `0000` equaling 0x0 and `1111` equaling `0xF`.
 
-The highest address in a 32-bit memory space can also be expressed as 2^{32} - 1, since the address count starts from 0, or as 4,294,967,295 in decimal. Using this, we can calculate the total size of the memory space as follows:
+The highest address in a 32-bit memory space can also be expressed as `2^{32} - 1`, since the address count starts from 0, or as 4,294,967,295 in decimal. Using this, we can calculate the total size of the memory space as follows:
 
 |  Binary representation                      |  Power of 2  |  Calculation           |  Decimal representation  |
 |  -----------------------------------------  |  ----------  |  --------------------  |  ----------------------  |
@@ -72,7 +72,7 @@ Each memory address corresponds to 1 byte in memory. For example:
 |  `0000 0000 0000 0000 0000 0000 0001 0010`  |  `0x00000013`     |  `1100 1100`      |  `0xDD`        |
 
 
-A 32-bit CPU can reference up to 2^{32} = 4,294,967,296 memory locations, which equals exactly 4 GB of memory. This is called addressable memory and it is the maximum amount of memory that a CPU can reference using its addresses.
+A 32-bit CPU can reference up to `2^{32}`, which equals exactly 4 GB of memory (4,294,967,296 memory locations). This is called addressable memory and it is the maximum amount of memory that a CPU can reference using its addresses.
 
 ### Physical and Addressable Memory
 
@@ -97,24 +97,24 @@ When a CPU stores values larger than one byte, such as 2-byte, 4-byte, or 8-byte
 
 For example, using the table above, the values would be arranged differently in memory depending on the endianness.
 
-|  Address     |  Data        |
-|  ----------  |  ----------  |
-|  0x00000000  |  0x000F1011  |
-|  0x00000004  |  0x121A1F20  |
-|  0x00000008  |  0x242F3F4F  |
-|  0x0000000C  |  0x8FAFFFAA  |
-|  0x00000010  |  0x5599EEDD  |
+|  Address       |  Data          |
+|  ------------  |  ------------  |
+|  `0x00000000`  |  `0x000F1011`  |
+|  `0x00000004`  |  `0x121A1F20`  |
+|  `0x00000008`  |  `0x242F3F4F`  |
+|  `0x0000000C`  |  `0x8FAFFFAA`  |
+|  `0x00000010`  |  `0x5599EEDD`  |
 
 
 While in litte endian, it would be:
 
-|  Address     |  Data        |
-|  ----------  |  ----------  |
-|  0x00000000  |  0x11100F00  |
-|  0x00000004  |  0x201F1A12  |
-|  0x00000008  |  0x4F3F2F24  |
-|  0x0000000C  |  0xAAFFAF8F  |
-|  0x00000010  |  0xDDEE9955  |
+|  Address       |  Data          |
+|  ------------  |  ------------  |
+|  `0x00000000`  |  `0x11100F00`  |
+|  `0x00000004`  |  `0x201F1A12`  |
+|  `0x00000008`  |  `0x4F3F2F24`  |
+|  `0x0000000C`  |  `0xAAFFAF8F`  |
+|  `0x00000010`  |  `0xDDEE9955`  |
 
 As another example, the 16-bit value `0xCAFE` would be stored as `FECA0000` in little-endian format and as `0000CAFE` in big-endian format. Note that the leading zeros are typically displayed when showing memory contents in fixed-width formats.
 
