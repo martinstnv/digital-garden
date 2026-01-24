@@ -1,8 +1,6 @@
 ---
-layout: single
 title: Memory Addressing
 date: 2025-11-30
-classes: wide
 tags:
   - Memory Addressing
   - Memory Space

@@ -1,8 +1,6 @@
 ---
-layout: single
 title: Portable Executables
-date: 2025-12-21
-classes: wide
+draft: true
 ---
 
 Portable executables are composed of two main areas - a header and sections. The header provides general information about the portable executables.

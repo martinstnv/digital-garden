@@ -1,8 +1,6 @@
 ---
-layout: single
 title: Program Memory
 date: 2025-12-20
-classes: wide
 tags:
   - Stack
   - Heap

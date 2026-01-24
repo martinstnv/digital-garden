@@ -1,8 +1,6 @@
 ---
-layout: single
 title: Buffer Overflow
-date: 2025-12-23
-classes: wide
+draft: true
 ---
 
 
