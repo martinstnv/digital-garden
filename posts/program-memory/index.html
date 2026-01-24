@@ -1,0 +1,177 @@
+<!doctype html><html lang=en-us><head><title>Program Memory // Digital Garden</title>
+<link rel="shortcut icon" href=favicon.ico><meta charset=utf-8><meta name=generator content="Hugo 0.127.0"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=author content="Martin Stoynov"><meta name=description content><link rel=stylesheet href=/css/main.min.5b1fcc8902588589c4767187402a3c29f8b8d7a6fdef6d9f8f77045bb0d14fee.css><link rel=stylesheet href=/custom.css><meta name=twitter:card content="summary"><meta name=twitter:title content="Program Memory"><meta name=twitter:description content="Operating systems use virtual memory to allow processes to work as if they have the full addressable space, even if physical RAM is smaller.
+Memory Addressing: Physical and Virtual Memory The following diagram illustrates a typical program memory layout on a 32-bit system, with virtual addresses spanning from 0x00000000 to 0xFFFFFFFF.
+(High Address) 0xFFFFFFFF -> +-----------------------------+ | Command-line arguments | | and environment variables | +-----------------------------+ | Stack | |."><meta property="og:url" content="/posts/program-memory/"><meta property="og:site_name" content="Digital Garden"><meta property="og:title" content="Program Memory"><meta property="og:description" content="Operating systems use virtual memory to allow processes to work as if they have the full addressable space, even if physical RAM is smaller.
+Memory Addressing: Physical and Virtual Memory The following diagram illustrates a typical program memory layout on a 32-bit system, with virtual addresses spanning from 0x00000000 to 0xFFFFFFFF.
+(High Address) 0xFFFFFFFF -> +-----------------------------+ | Command-line arguments | | and environment variables | +-----------------------------+ | Stack | |."><meta property="og:locale" content="en_us"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2025-12-20T00:00:00+00:00"><meta property="article:modified_time" content="2025-12-20T00:00:00+00:00"><meta property="article:tag" content="Stack"><meta property="article:tag" content="Heap"><link rel=alternate type=application/rss+xml href=/index.xml title="Digital Garden"></head><body><header class=app-header><a href=/><img class=app-header-avatar src=/avatar.jpg alt="Martin Stoynov"></a><h1>Digital Garden</h1><nav class=app-header-menu><a class=app-header-menu-item href=/about/>About</a>
+-
+<a class=app-header-menu-item href=/tags/>Tags</a></nav><p>Thoughts, experiments and ideas from my digital garden.</p><div class=app-header-social><a href=https://github.com/martinstnv target=_blank rel="noreferrer noopener"><svg class="icon icon-github" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>github</title><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
+</a><a href=https://linkedin.com/in/martinstnv target=_blank rel="noreferrer noopener"><svg class="icon icon-linkedin" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>linkedin</title><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+</a><a href=https://infosec.exchange/@martinstnv target=_blank rel="noreferrer noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-link"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></a></div></header><main class=app-container><article class=post><header class=post-header><h1 class=post-title>Program Memory</h1><div class=post-meta><div><svg class="icon icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>calendar</title><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+Dec 20, 2025</div><div><svg class="icon icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>clock</title><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+6 min read</div><div><svg class="icon icon-tag" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>tag</title><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83.0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+<a class=tag href=/tags/stack/>Stack</a>
+<a class=tag href=/tags/heap/>Heap</a></div></div></header><div class=post-content><blockquote><p>Operating systems use virtual memory to allow processes to work as if they have the full addressable space, even if physical RAM is smaller.</p></blockquote><ul><li><a href=/memory-addressing/#physical-and-virtual-memory>Memory Addressing: Physical and Virtual Memory</a></li></ul><p>The following diagram illustrates a typical program memory layout on a 32-bit system, with virtual addresses spanning from <code>0x00000000</code> to <code>0xFFFFFFFF</code>.</p><pre tabindex=0><code>(High Address)
+0xFFFFFFFF  -&gt;  +-----------------------------+
+                |   Command-line arguments    |
+                |  and environment variables  |
+                +-----------------------------+
+                |            Stack            | 
+                |.............................|
+                |                             |
+                |.............................|
+                |            Heap             |
+                +-----------------------------+
+                |     Data Segment (BSS)      |
+                |       (Uninitialised)       | 
+                +-----------------------------+
+                |         Data Segment        |
+                |         (Initialised)       | 
+                +-----------------------------+
+                |         Text Segment        |
+                |        (Program Code)       |
+0x00000000  -&gt;  +-----------------------------+
+(Low Address)
+</code></pre><p>At the bottom of the address space lies the Text Segment, or the Program Code, which stores the program’s instructions.</p><p>Directly above the Text segment is the Data segment, which is divided into two areas:</p><ol><li>Initialized data - where variables with predefined values are stored.</li><li>Uninitialized data (BSS) - where variables without initial values reside.</li></ol><blockquote><p>Note: Global variables that are not explicitly initialized by the program are automatically set to 0 by the process model. This behavior does not apply to local variables.</p></blockquote><p>All contents of the Text and Data segments are determined at compile time, so the compiler knows their locations and encodes this information in the executable.</p><p>At the very top of the memory space are the command-line arguments and environment variables, which are set when the process starts. Immediately below them is the Stack, which holds local variables as well as metadata used for function calls and returns.</p><p>Between the Data segment and the Stack lies the Heap, the area managed by dynamic memory functions.</p><p>Unlike the Text and Data segments, the contents of the Stack and Heap are determined at runtime, and their organization and growth depend on the program’s execution.</p><p>As the program requires more memory for the Heap, it expands upward toward higher memory addresses, whereas the Stack grows downward toward lower addresses when more space is needed.</p><p>In Windows things look different - the typical layout is:</p><pre tabindex=0><code>0xFFFFFFFF  +-----------------------------------+
+            |           Kernel space            |
+            |          (system memory)          | 
+            |    (inaccessible to user mode)    |
+            +-----------------------------------+
+            |                                   |
+            +-----------------------------------+
+            |               DLLs                |
+            |       (mapped into memory)        |
+            +-----------------------------------+
+            |                                   |
+            |                                   |
+            +...................................+
+            |               Heap                |
+            |          (grows upward)           |
+            +-----------------------------------+
+            |               TEB                 |
+            |     Thread Environment Block      |
+            +-----------------------------------+
+            |               PEB                 |
+            |    Process Environment Block      |
+            +-----------------------------------+
+            |           Program Image           |
+            |       (code + data + .bss)        |
+            +-----------------------------------+
+            |               Stack               |
+            |  (Thread stacks, grows downward)  |
+            +...................................+
+            |                                   |
+            |                                   |
+            +-----------------------------------+
+            |             NULL page             |
+            |    (inaccessible, guard page)     |
+0x00000000  +-----------------------------------+
+</code></pre><p>However, for this excersise we will be focusing on the memory layout that is typical for UNIX-like systems.</p><h2 id=the-stack>The Stack</h2><p>During execution, the program keeps track of the Stack Pointer, which marks the current top of the Stack.</p><pre tabindex=0><code>0xFFFFFFFF  +-----------------------------+
+            |             ...             |
+            +-----------------------------+
+            |            Stack            |
+            |.............................| &lt;- Stack Pointer
+            |                             |
+            |                             |
+            |                             |
+            |.............................|
+            |            Heap             |
+            +-----------------------------+
+            |             ...             |
+            +-----------------------------+
+            |        section .text        |
+            |        global _start        |
+            |                             |
+            |        _start:              |
+            |            ...              |
+0x00000000  +-----------------------------+
+</code></pre><p>When a push instruction is executed, the value is placed onto the Stack, and the Stack Pointer is updated accordingly.</p><pre tabindex=0><code>0xFFFFFFFF  +-----------------------------+
+            |             ...             |
+            +-----------------------------+
+            |            Stack            |
+            |.............................|
+            |            1337             |                    
+            |.............................|
+            |            7331             |
+            |.............................| &lt;- Stack Pointer
+            |                             |
+            |                             |
+            |                             |
+            |.............................|
+            |            Heap             |
+            +-----------------------------+
+            |             ...             |
+            +-----------------------------+
+            |        section .text        |
+            |        global _start        |
+            |                             |
+            |        _start:              |
+            |            push 0x539;      |
+            |            push 0x1CB3;     |
+            |            ...              |
+            +-----------------------------+
+</code></pre><p>In addition to storing local variables, the stack is used to manage function calls and returns, keeping track of return addresses and other bookkeeping information.</p><p>Now, let’s examine the basic stack layout for the following function.</p><pre tabindex=0><code>void func(char *arg1, int arg2, int arg3)
+{
+    char loc1[4];
+    int loc2;
+    loc2++;
+}
+</code></pre><p>The function receives three arguments and contains two local variables. The diagram below illustrates the process memory, beginning with the caller’s data, that is, the data belonging to the function that invoked this one.</p><pre tabindex=0><code>0xFFFFFFFF  +-----------------------------+
+            |             ...             |
+            +-----------------------------+
+            |         Caller&#39;s data       |
+            |.............................| &lt;- Stack Pointer
+            |                             |
+            |                             |
+</code></pre><p>When a CALL instruction is executed, the function arguments are first pushed onto the stack in reverse order, followed by the return address, which indicates the instruction to execute once the called function completes.</p><pre tabindex=0><code>0xFFFFFFFF  +-----------------------------+
+            |             ...             |
+            +-----------------------------+
+            |         Caller&#39;s data       |
+            |.............................|
+            |             arg3            |
+            |.............................|
+            |             arg2            |
+            |.............................|
+            |             arg1            |
+            |.............................|
+            |        Return Address       |
+            |.............................| &lt;- ESP
+            |                             |
+            |                             |
+</code></pre><p>To ensure the function can return correctly to its caller and restore the caller’s Frame Pointer, the callee saves the previous EBP value onto the stack.</p><p>For the compiler to accurately access a variable within a function, it needs to know the variable’s fixed offset relative to the Frame Pointer, usually stored in the EBP register. This is why the Frame Pointer is set to the current stack pointer’s value, and then all local variables are pushed onto the stack in the order they appear in the program.</p><p>As a result, no matter when or from where the function is invoked, the compiler can reliably determine that a local variable, such as loc2, will always be located at a fixed offset (e.g., 8 bytes) from the Frame Pointer.</p><pre tabindex=0><code>0xFFFFFFFF  +-----------------------------+
+            |             ...             |
+            +-----------------------------+
+            |         Caller&#39;s data       |
+            |.............................| &lt;- start of stack frame
+            |             arg3            |
+            |.............................|
+            |             arg2            |
+            |.............................|
+            |             arg1            |
+            |.............................|
+            |        Return Address       |
+            |.............................|
+            |    Caller&#39;s Frame Pointer   |
+            |.............................| &lt;- EBP
+            |             loc1            |
+            |.............................|
+            |             loc2            |
+            |.............................| &lt;- ESP
+            |                             |
+            |                             |
+</code></pre><p>Everything from the first argument till the stack pointer is considered as the Stack Frame.</p><pre tabindex=0><code>0xFFFFFFFF  +-----------------------------+
+            |             ...             |
+            +-----------------------------+
+            |         Caller&#39;s data       |
+            |.............................| &lt;--+
+            |             arg3            |    |
+            |.............................|    |
+            |                             |    |
+            |             ...             |    | Stack Frame
+            |                             |    |
+            |.............................|    |
+            |             loc2            |    |
+            |.............................| &lt;--+
+            |                             |
+            |                             |
+</code></pre><p>When a called function completes execution, it uses the stored return address to continue execution in the caller.</p><blockquote><p>In summary a function call works as follows:</p><ol><li>The caller first pushes the function arguments onto the stack in reverse order, followed by the return address</li><li>Within the called function, the previous Frame Pointer is saved on the stack</li><li>A new Frame Pointer is established and space is allocated for local variables</li></ol></blockquote><blockquote><p>To return, the function restores the previous stack frame by resetting the Frame Pointer and then jumps back to the return address stored on the stack.</p></blockquote></div><div class=post-footer></div></article></main></body></html>
