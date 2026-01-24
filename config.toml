@@ -1,0 +1,47 @@
+baseURL = '/'
+languageCode = 'en-us'
+title = 'Digital Garden'
+theme = "m10c"
+googleAnalytics = ""
+
+rssLimit = 20
+copyright = "Martin Stoynov"
+
+[author]
+  name = "Martin Stoynov"
+
+[params]
+  author = "Martin Stoynov"
+  description = "Thoughts, experiments and ideas from my digital garden."
+  favicon = "favicon.ico"
+  avatar = "avatar.jpg"
+
+[[menu.main]]
+  identifier = "tags"
+  name = "Tags"
+  url = "/tags/"
+
+[[menu.main]]
+  identifier = "about"
+  name = "About"
+  url = "/about/"
+
+[[params.social]]
+  icon = "github"
+  name = "Github"
+  url = "https://github.com/martinstnv"
+
+[[params.social]]
+  icon = "linkedin"
+  name = "Linkedin"
+  url = "https://linkedin.com/in/martinstnv"
+
+[[params.social]]
+  icon = "mastodon"
+  name = "Infosec Exchanges"
+  url = "https://infosec.exchange/@martinstnv"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
