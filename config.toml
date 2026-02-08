@@ -23,7 +23,7 @@ copyright = "Martin Stoynov"
 
 [[menu.main]]
   identifier = "posts"
-  name = "Notes"
+  name = "Posts"
   url = "/posts/"
 
 [[params.social]]
