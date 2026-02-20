@@ -1,14 +1,6 @@
 ---
 title: Compiling Code
-draft: true
 ---
-
-TODO: https://www.youtube.com/watch?v=fpnE6UAfbtU
-TODO: https://www.youtube.com/watch?v=RnBOOF502p0
-TODO: https://www.youtube.com/watch?v=1I5ZMmrOfnA
-TODO: TUV Lectures
-TODO: GODBOLT
-TODO: RE4B BOOK
 
 ## Assignments
 
