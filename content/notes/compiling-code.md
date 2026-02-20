@@ -1,5 +1,8 @@
 ---
 title: Compiling Code
+tags:
+    - Assembly
+    - C++
 ---
 
 ## Assignments
@@ -100,7 +103,7 @@ Before the first block we have a comparison and a conditional jump, like in the 
 
 Here is an example of a `while` statement:
 
-```nasm
+```cpp
 int main() {
     int x;
     x = 3;
