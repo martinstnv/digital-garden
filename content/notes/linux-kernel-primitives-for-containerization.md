@@ -33,9 +33,13 @@ User namespaces allow user and group IDs inside a container to be mapped to diff
 
 Control groups, or cgroups, manage and limit resource usage. They enforce constraints on CPU, memory, disk I/O, and other resources, ensuring that one container cannot monopolize system resources and starve other workloads on the same host.
 
-## Non-Linux Containerization
+## Containerization Outside Native Linux
 
-Containers are a linux kernel feature. MacOS runs the Darwin kernel and Windows runs NT, neither of which has the features containers need, so softwares like Docker create a lightweight Linux VM in the background. Containers run inside that VM, not directly on the host machine, which is why it feels slower. Files are being synced across the VM boundary (3 times slower than native Linux). Network traffic also routes through the VM 
+Containers are a Linux kernel feature. macOS runs the Darwin kernel, and Windows runs the NT kernel - neither of which provides the native primitives (such as namespaces and cgroups) required for Linux containers.
+
+To bridge this gap, tools like Docker create a lightweight Linux virtual machine in the background. Containers run inside that VM rather than directly on the host operating system.
+
+Because of this additional virtualization layer, there is some performance overhead compared to running containers on native Linux. File system operations are slower since files must cross the VM boundary, and network traffic is also routed through the virtual machine’s networking stack instead of the host’s native one.
 
 # Practice
 
