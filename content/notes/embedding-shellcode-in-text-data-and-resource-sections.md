@@ -1,6 +1,6 @@
 ---
 title: Embedding Shellcode in Text, Data and Resource Sections
-date: 2026-02-22
+date: 2024-02-09
 tags:
     - C++
     - WinAPI

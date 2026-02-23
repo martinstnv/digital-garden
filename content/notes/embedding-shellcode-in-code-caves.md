@@ -1,6 +1,6 @@
 ---
 title: Embedding Shellcode Code Caves
-date: 2026-02-22
+date: 2024-02-10
 tags:
     - C++
     - WinAPI
