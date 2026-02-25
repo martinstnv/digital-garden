@@ -1,6 +1,7 @@
 ---
 title: Compiling Code
 date: 2023-11-01
+draft: true
 tags:
     - Assembly
     - C++
