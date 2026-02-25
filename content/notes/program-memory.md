@@ -1,5 +1,5 @@
 ---
-title: Program Memory
+title: Program Memory Layout
 date: 2025-12-20
 tags:
   - Stack
