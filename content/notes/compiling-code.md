@@ -1,5 +1,5 @@
 ---
-title: Compiling Code
+title: Compiling C++ Code
 date: 2023-11-01
 draft: true
 tags:
@@ -7,178 +7,104 @@ tags:
     - C++
 ---
 
-## Assignments
+> Visualizing simple C functions compiled with GCC 15.2 into x86-64 assembly to analyze stack frame layouts, register usage, argument passing, and control-flow decisions, all interactively explored through the [Compiler Explorer](https://godbolt.org)
 
-Here is an example of a variable assignment:
+## Assignment to Local Variables
+
+Consider the following function, which assigns an integer value to a local variable:
 
 ```cpp
-int main() {
-    int x;
-    x = 3;
+int func() {
+    int x = 3;
 }
 ```
 
-... and here is the exact equivalent in assembler:
+This code compiles to the following assembly instructions:
 
-```nasm
-pushq   %rbp
-movq    %rsp, %rbp
-movl    $3, -4(%rbp)
-movl    $0, %eax
-popq    %rbp
-ret
+```
+func():
+        push    rbp
+        mov     rbp, rsp
+        mov     DWORD PTR [rbp-4], 1337
+        ud2
 ```
 
-It's important to not that most of the instructions are responsible for starting and ending the `main` function, which determines where the program starts and ends.
+`push rbp` saves the current value of the base pointer (rbp) onto the stack. This preserves the caller’s frame pointer so it can be restored when the function returns.
 
-This is the instruction that corresponds to the assignment of the  `x` variable:
+`mov rbp, rsp` establishes a new stack frame for the current function by copying the stack pointer (rsp) into the base pointer (rbp). The base pointer provides a stable reference point for accessing local variables and function parameters within the stack frame.
 
-```nasm
-movl    $3, -4(%rbp)
+Because the base pointer remains constant throughout the function’s execution, the compiler can reference local variables using fixed offsets relative to rbp. For example, the variable x is stored at a fixed offset from the frame pointer (in this case, 4 bytes below it).
+
+`mov DWORD PTR [rbp-4], 1337` writes the value 1337 to the memory location at rbp - 4. The DWORD qualifier specifies that the operation writes 4 bytes, which corresponds to the size of an int.
+
+`ud2` is an undefined instruction that always triggers an invalid instruction exception. It is used as a trap. Since the function is declared to return an int, a return value is expected in the eax register. However, because the function does not return a value, this results in undefined behavior in C. Instead of allowing execution to continue with an unspecified return value, the compiler emits ud2 so that execution will immediately fault if the instruction is reached.
+
+
+## Assignment to Function Arguments
+
+Now, consider the following function, which assigns a value to a function argument:
+
+```cpp
+int func(int num) {
+    num = 1337;
+}
 ```
 
-The instruction says to "move" the number 3 into this memory location.
+The compiler generates the following assembly instructions:
+
+```
+func(int):
+        push    rbp
+        mov     rbp, rsp
+        mov     DWORD PTR [rbp-4], edi
+        mov     DWORD PTR [rbp-4], 1337
+        ud2
+```
+
+`mov DWORD PTR [rbp-4], edi` copies the function argument num from the edi register into a local stack slot at `[rbp-4]`.
+
+> Under the System V AMD64 calling convention (used on Linux and macOS), the first integer argument to a function is passed in the edi register. In unoptimized builds, compilers often store such arguments in the stack frame so they can be accessed consistently via fixed offsets from the base pointer.
+
 
 ## Conditional Statements
 
-Here is an example of an `if` statement:
+Next, consider a simple comparison between a local variable and a function argument:
 
 ```cpp
-int main() {
-    int x;
-    x = 3;
-    if (x < 10) {
-        x = x + 1;
+int func(int num) {
+    int x = 1337;
+    if (x < num) {
+        x = 7331;
     }
 }
 ```
 
-... and here is the exact equivalent in assembler:
+The corresponding assembly introduces an additional label, .L2, to manage the conditional branch:
 
-```nasm
-        pushq   %rbp
-        movq    %rsp, %rbp
-        movl    $3, -4(%rbp)
-        cmpl    $9, -4(%rbp)
-        jmp     ENDIF
-        addl    $1, -4(%rbp)
-ENDIF:  movl    $0, %eax
-        popq    %rbp
-        ret
+```
+func(int):
+        push    rbp
+        mov     rbp, rsp
+        mov     DWORD PTR [rbp-20], edi
+        mov     DWORD PTR [rbp-4], 1337
+        mov     eax, DWORD PTR [rbp-4]
+        cmp     eax, DWORD PTR [rbp-20]
+        jge     .L2
+        mov     DWORD PTR [rbp-4], 7331
+.L2:
+        ud2
 ```
 
-Before the regular block, we have instructions to evaluate the condition, and then we have a conditional jump statement. The processor knows whether or not to skip this jump based on the result of the previous instruction. That instruction temporarily sets some flags in the processor, so that we could remember the result by the time we get to this conditional jump to skip over the block.
+`mov DWORD PTR [rbp-20], edi` copies the function argument num from the `edi` register into memory at `[rbp-20]`.
 
-Here is an example of an `if-else` statement:
+> The offset of 20 bytes from rbp is chosen to allocate space for all local variables, maintain proper alignment (typically 16-byte alignment on x86-64), and leave room for temporary variables or spilled registers.
 
-```cpp
-int main() {
-    int x;
-    x = 3;
-    if (x < 10) {
-        x = x + 1;
-    } else {
-        x = 42;
-    }
-}
-```
+`mov eax, DWORD PTR [rbp-4]` loads the value of the local variable x into the eax register. This prepares it for comparison, as the `cmp` instruction operates on registers.
 
-... and here is the exact equivalent in assembler:
+`cmp eax, DWORD PTR [rbp-20]` compares eax (holding x) with the stored argument `num`.
 
-```nasm
-        pushq   %rbp
-        movq    %rsp, %rbp
-        movl    $3, -4(%rbp)
-        cmpl    $9, -4(%rbp)
-        jg      ELSE
-        addl    $1, -4(%rbp)
-        jmp     ENDIF
-ELSE:   movl    $42, -4(%rbp)
-ENDIF:  movl    $0, %eax
-        popq    %rbp
-        ret
-```
+> The CPU sets status flags based on the result, which are then used by the conditional jump to determine control flow.
 
-Before the first block we have a comparison and a conditional jump, like in the previous example. In between the blocks we have a regular and non-conditional jump instruction. This is so the execution skips the second block if it just finished the first one.
+`jge .L2` jumps to the label `.L2` if the comparison indicates that eax is greater than or equal to the argument.
 
-## Loops
-
-Here is an example of a `while` statement:
-
-```cpp
-int main() {
-    int x;
-    x = 3;
-    while (x < 10) {
-        x = x + 1;
-    }
-}
-```
-
-... and here is the exact equivalent in assembler:
-
-```nasm
-        pushq   %rbp
-        movq    %rsp, %rbp
-        movl    $3, -4(%rbp)
-        jmp     WHILE
-DO:     addl    $1, -4(%rbp)
-WHILE:  cmpl    $9, -4(%rbp)
-        jle     DO
-        movl    $0, %eax
-        popq    %rbp
-        ret
-```
-
-## Functions
-
-Here is an example of a function named `factorial`, which returns the factorial of a given number:
-
-```cpp
-int factorial(int x) {
-	if (x == 0) {
-	    return 1;
-	} else {
-        return x * factorial(x-1);
-    }
-}
-
-int main() {
-    int x, y;
-    x = 3;
-    y = factorial(x);
-}
-```
-
-... and here is the exact equivalent in assembler:
-
-```nasm
-FACTORIAL:
-        pushq   %rbp
-        movq    %rsp, %rbp
-        subq    $16, %rsp
-        movl    %edi, -4(%rbp)
-        cmpl    $0, -4(%rbp)
-        jne     ELSE
-        movl    $1, %eax
-        jmp     ENDIF
-ELSE    movl    -4(%rbp), %eax
-        subl    $1, %eax
-        movl    %eax, %edi
-        call    FACTORIAL
-        imull   -4(%rbp), %eax
-ENDIF   leave
-        ret
-MAIN:
-        pushq   %rbp
-        movq    %rsp, %rbp
-        subq    $16, %rsp
-        movl    $3, -8(%rbp)
-        movl    -8(%rbp), %eax
-        movl    %eax, %edi
-        call    FACTORIAL
-        movl    %eax, -4(%rbp)
-        movl    $0, %eax
-        leave
-        ret
-```
+> In other words, if the condition `x < num` is false, execution skips the body of the `if` statement.
