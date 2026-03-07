@@ -221,3 +221,41 @@ func():
 7. If the comparison fails, execution jumps to `.L2`. There, EAX is loaded with the locally stored function argument, decremented by 1, and reassigned to EDI to serve as the argument for the recursive call.
 
 8. After the recursive call returns, EAX contains the result, which is then multiplied by the original local argument to compute `x * factorial(x - 1)`.
+
+
+## Pointers
+
+```
+void func() {
+    int x = 1337;
+    int *p;
+    p = &x;
+    *p = 7331;
+}
+```
+
+```
+func():
+        push    rbp
+        mov     rbp, rsp
+        mov     DWORD PTR [rbp-12], 1337
+        lea     rax, [rbp-12]
+        mov     QWORD PTR [rbp-8], rax
+        mov     rax, QWORD PTR [rbp-8]
+        mov     DWORD PTR [rax], 7331
+        nop
+        pop     rbp
+        re
+```
+
+> On x86-64, 8-byte objects should be aligned to 8-byte boundaries. Therefore the pointer p must start at an address divisible by 8, since pointers occupy 8 bytes. In contrast, the integer variable `x` only requires 4 bytes.
+
+1. After the function prologue and initialization of `x`, the program obtains the address of x using `lea rax, [rbp-12]`. This instruction loads the effective address of the local variable into the RAX register.
+
+> Note that this does not load the value of `x`, but rather its address.
+
+2. Next, `mov QWORD PTR [rbp-8], rax` stores that address in the memory location reserved for the pointer p.
+
+3. The program then loads the value of `p` back into the RAX register with `mov rax, QWORD PTR [rbp-8]`. This places the address of `x` into RAX.
+
+4. Finally, the instruction `mov DWORD PTR [rax], 7331` writes the value 7331 to the memory address stored in RAX. Since RAX holds the address of `x`, this operation effectively performs the assignment `*p = 7331`, changing the value of `x`.
