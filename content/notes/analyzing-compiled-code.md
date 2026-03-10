@@ -1,5 +1,5 @@
 ---
-title: Compiling Native Code
+title: Analyzing Compiled Code
 date: 2026-03-05
 tags:
     - Assembly
